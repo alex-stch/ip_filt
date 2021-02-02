@@ -6,23 +6,18 @@
 #include <vector>
 #include <regex>
 
-#define PRNT_DBG 0
-
 class one_ip {
   uint8_t f1=0, f2=0, f3=0, f4=0;
 public:
   one_ip() noexcept :
       f1(0), f2(0), f3(0), f4(0) {
-    if(PRNT_DBG) std::cout << "Default Ctor: " << (uint) f1 << "." << (uint) f2 << "." << (uint) f3 << "." << (uint) f4 << std::endl;
   }
 
   one_ip(const one_ip &other) noexcept :
       f1(other.f1), f2(other.f2), f3(other.f3), f4(other.f4) {
-    if(PRNT_DBG) std::cout << "Copy CTor: " << (uint) f1 << "." << (uint) f2 << "." << (uint) f3 << "." << (uint) f4 << " (with " << (uint) other.f1 << "." << (uint) other.f2 << "." << (uint) other.f3 << "." << (uint) other.f4 << ")" << std::endl;
   }
 
   one_ip& operator=(const one_ip &other) noexcept {
-    if(PRNT_DBG) std::cout << "Copy Assignment: " << (uint) f1 << "." << (uint) f2 << "." << (uint) f3 << "." << (uint) f4 << " (with " << (uint) other.f1 << "." << (uint) other.f2 << "." << (uint) other.f3 << "." << (uint) other.f4 << ")" << std::endl;
     if (this == &other) return *this;
     f1 = other.f1;
     f2 = other.f2;
@@ -32,7 +27,6 @@ public:
   }
 
   one_ip(one_ip &&other) noexcept {
-    if(PRNT_DBG) std::cout << "Move CTor: " << (uint)f1 << "." << (uint)f2 << "." << (uint)f3 << "." << (uint)f4 << " (with " << (uint)other.f1 << "." << (uint)other.f2 << "." << (uint)other.f3 << "." << (uint)other.f4 << ")" << std::endl;
     f1 = std::exchange(other.f1, 0);
     f2 = std::exchange(other.f2, 0);
     f3 = std::exchange(other.f3, 0);
@@ -40,7 +34,6 @@ public:
   }
 
   one_ip& operator=(one_ip &&other) noexcept {
-    if(PRNT_DBG) std::cout << "Move Assignment: " << (uint) f1 << "." << (uint) f2 << "." << (uint) f3 << "." << (uint) f4 << " (with " << (uint) other.f1 << "." << (uint) other.f2 << "." << (uint) other.f3 << "." << (uint) other.f4 << ")" << std::endl;
     if (this != &other) {
       f1 = std::exchange(other.f1, 0);
       f2 = std::exchange(other.f2, 0);
@@ -52,7 +45,6 @@ public:
 
   one_ip(uint8_t in_f1, uint8_t in_f2, uint8_t in_f3, uint8_t in_f4) noexcept :
       f1(in_f1), f2(in_f2), f3(in_f3), f4(in_f4) {
-    if(PRNT_DBG) std::cout << "Regular Ctor: " << (uint) f1 << "." << (uint) f2 << "." << (uint) f3 << "." << (uint) f4 << std::endl;
   }
 
   one_ip(const std::string &a, const std::string &b, const std::string &c, const std::string &d) {
@@ -60,7 +52,6 @@ public:
     f2 = std::stoul(b);
     f3 = std::stoul(c);
     f4 = std::stoul(d);
-    if(PRNT_DBG) std::cout << "Conversion CTor: " << (uint)f1 << "." << (uint)f2 << "." << (uint)f3 << "." << (uint)f4 << std::endl;
   }
 
   operator std::string() const {
@@ -168,7 +159,6 @@ std::vector<one_ip> filter_ips(const std::vector<one_ip> &vec, int a=-1, int b=-
   std::copy_if(vec.begin(), vec.end(),
                std::back_inserter(filtered_ips),
                [=](const one_ip& ip) { return ip.filter(a,b,c,d); });
-  if(PRNT_DBG) std::cout << "Before return from filter_ips(...)" << std::endl;
   return filtered_ips;
 }
 
@@ -177,7 +167,6 @@ std::vector<one_ip> filter_any_ips(const std::vector<one_ip> &vec, uint val){
   std::copy_if(vec.begin(), vec.end(),
                std::back_inserter(filtered_ips),
                [=](const one_ip& ip) { return ip.filter_any(val); });
-  if(PRNT_DBG) std::cout << "Before return from filter_any_ips(...)" << std::endl;
   return filtered_ips;
 }
 
@@ -189,32 +178,23 @@ int main(int, char const*[]) {
     for (std::string line; std::getline(std::cin, line);) {
       if (std::regex_match(line, pieces_match, pat)) {
         vip.emplace_back( pieces_match[1].str(), pieces_match[2].str(), pieces_match[3].str(), pieces_match[4].str() );
-        if(PRNT_DBG) std::cout << "\n\nINIT: Vector size=" << vip.size() << "\n      Vector capasity=" << vip.capacity() << std::endl;
       } else {
         std::cerr << "Format error: there is no IP address in the line '" << line << "'\n";
       }
 
     }
 
-    if(PRNT_DBG) std::cout << "\n\nAFTER INIT: Vector size=" << vip.size() << "\nVector capasity=" << vip.capacity() << std::endl;
-
     // TODO reverse lexicographically sort
     std::cout << "\n============== raw data input from stdin ==============" << std::endl;
 
     print_ips(vip);
 
-    if(PRNT_DBG) std::cout << "\n\nBEFORE SORT: Vector size=" << vip.size() << "\nVector capasity=" << vip.capacity() << std::endl;
-
-
     std::sort(vip.begin(), vip.end(), [](one_ip &lhs, one_ip &rhs) {
-      if(PRNT_DBG) std::cout << "lhs=" << (std::string) lhs << "   rhs=" << (std::string) rhs << std::endl;
       return lhs > rhs;
     });
 
     std::cout << "\n============== reverse lexicographically sort ==============" << std::endl;
     print_ips(vip);
-
-    if(PRNT_DBG) std::cout << "\n\nAFTER SORT: Vector size=" << vip.size() << "\nVector capasity=" << vip.capacity() << std::endl;
 
 // 222.173.235.246
 // 222.130.177.64
