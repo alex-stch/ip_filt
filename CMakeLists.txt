@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.2)
 project(ip_filt VERSION 0.0.$ENV{TRAVIS_BUILD_NUMBER})
 
 configure_file(before_deploy.sh.in before_deploy.sh COPYONLY)
-configure_file(gen_test_out.sh.in gen_test_out.sh COPYONLY)
 
 add_executable(ip_filt main.cpp)
 
