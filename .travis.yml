@@ -21,7 +21,7 @@ script:
 - cmake --build .
 - cmake --build . --target package
 before_deploy:
-- "chmod +x before_deploy.sh gen_test_out.sh"
+- "chmod +x before_deploy.sh"
 - ./before_deploy.sh
 deploy:
    provider: script
